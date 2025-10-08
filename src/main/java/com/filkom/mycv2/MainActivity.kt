@@ -5,12 +5,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.filkom.mycv2.screen.Login
+import com.filkom.mycv2.screen.detail
+import com.filkom.mycv2.screen.daftar
 import com.filkom.mycv2.ui.theme.MyCV2Theme
 
 class MainActivity : ComponentActivity() {
@@ -19,11 +22,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MyCV2Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    MyAppNavigation()
                 }
             }
         }
@@ -31,17 +31,25 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun MyAppNavigation() {
+    val navController = rememberNavController()
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MyCV2Theme {
-        Greeting("Android")
+    NavHost(navController = navController, startDestination = "login") {
+        composable("login") {
+            Login(
+                onLogin = { navController.navigate("detail") },
+                onDaftar = { navController.navigate("daftar") }
+            )
+        }
+        composable("detail") {
+            detail(
+                onDaftar = { navController.navigate("daftar") }
+            )
+        }
+        composable("daftar") {
+            daftar(
+                onSimpan = { navController.navigate("detail") }
+            )
+        }
     }
 }

@@ -1,9 +1,6 @@
 package com.filkom.mycv2.screen
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,41 +12,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun detail()
-{
-    Column (
+fun detail(onDaftar: () -> Unit) {
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp)
+            .padding(20.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "DETAIL",
-            modifier = Modifier
-                .padding(10.dp)
-                .fillMaxWidth(),
+            fontSize = 20.sp,
             textAlign = TextAlign.Center
         )
-        Text(
-            text = "nim",fontSize = 14.sp,
-            modifier = Modifier.padding(vertical = 10.dp)
-        )
-        Text(
-            text = "nama", fontSize = 14.sp,
-            modifier = Modifier.padding(vertical = 10.dp)
-        )
-        Text(
-            text = "email",fontSize = 14.sp,
-            modifier = Modifier.padding(vertical = 10.dp)
-        )
-        Text(
-            text = "alamat",fontSize = 14.sp,
-            modifier = Modifier.padding(vertical = 10.dp)
-        )
 
-        Button (
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            onClick = {})
-        {
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(text = "NIM: 2251506000001", fontSize = 14.sp)
+        Text(text = "Nama: Tsan", fontSize = 14.sp)
+        Text(text = "Email: tsan@example.com", fontSize = 14.sp)
+        Text(text = "Alamat: Malang", fontSize = 14.sp)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(onClick = { onDaftar() }) {
             Text("DAFTAR")
         }
     }
@@ -58,5 +44,5 @@ fun detail()
 @Preview
 @Composable
 fun detailPreview() {
-    detail()
+    detail({})
 }
