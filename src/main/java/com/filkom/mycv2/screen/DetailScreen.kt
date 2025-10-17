@@ -10,9 +10,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.filkom.mycv2.ui.daftar.DaftarViewModel
 
 @Composable
-fun detail(onDaftar: () -> Unit) {
+fun DetailScreen(
+    onBackToLogin: () -> Unit,
+    vm: DaftarViewModel = viewModel()
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -20,29 +25,26 @@ fun detail(onDaftar: () -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "DETAIL",
-            fontSize = 20.sp,
-            textAlign = TextAlign.Center
-        )
+        Text("DETAIL", fontSize = 20.sp, textAlign = TextAlign.Center)
+        Spacer(Modifier.height(12.dp))
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Text("NIM: ${vm.nim.value}", fontSize = 14.sp)
+        Text("Nama: ${vm.nama.value}", fontSize = 14.sp)
+        Text("Email: ${vm.email.value}", fontSize = 14.sp)
+        Text("Alamat: ${vm.alamat.value}", fontSize = 14.sp)
 
-        Text(text = "NIM: 2251506000001", fontSize = 14.sp)
-        Text(text = "Nama: Tsan", fontSize = 14.sp)
-        Text(text = "Email: tsan@example.com", fontSize = 14.sp)
-        Text(text = "Alamat: Malang", fontSize = 14.sp)
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(onClick = { onDaftar() }) {
-            Text("DAFTAR")
+        Spacer(Modifier.height(20.dp))
+        Button(
+            onClick = onBackToLogin,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("KEMBALI KE LOGIN")
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun detailPreview() {
-    detail({})
+private fun DetailPreview() {
+    DetailScreen(onBackToLogin = {})
 }

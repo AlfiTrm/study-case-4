@@ -2,64 +2,119 @@ package com.filkom.mycv2.screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.filkom.mycv2.ui.login.AuthViewModel
 
 @Composable
-fun Login(onLogin: () -> Unit, onDaftar: () -> Unit) {
-    var nim by remember { mutableStateOf("") }
-    var nama by remember { mutableStateOf("") }
-
+fun Login(
+    onLogin: () -> Unit,
+    onDaftar: () -> Unit,
+    vm: AuthViewModel = viewModel()
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(30.dp),
-        verticalArrangement = Arrangement.Center,
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "LOGIN")
-
-        OutlinedTextField(
-            value = nim,
-            onValueChange = { nim = it },
-            label = { Text("NIM") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 5.dp)
+        LoginScreen(
+            onSuccess = onLogin,
+            vm = vm
         )
 
-        OutlinedTextField(
-            value = nama,
-            onValueChange = { nama = it },
-            label = { Text("Nama") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 5.dp)
-        )
+        Spacer(Modifier.height(12.dp))
 
-        Button(
-            modifier = Modifier.padding(top = 16.dp),
-            onClick = { onLogin() }
+        OutlinedButton(
+            onClick = onDaftar,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text("LOGIN")
-        }
-
-        Button(
-            modifier = Modifier.padding(top = 8.dp),
-            onClick = { onDaftar() }
-        ) {
-            Text("DAFTAR")
+            Text("Daftar")
         }
     }
 }
 
-@Preview
 @Composable
-fun LoginPreview() {
-    Login({}, {})
+fun LoginScreen(
+    onSuccess: () -> Unit,
+    vm: AuthViewModel = viewModel()
+) {
+    val state by vm.uiState.collectAsState()
+
+    LaunchedEffect(state.success) {
+        if (state.success) {
+            onSuccess()
+            vm.consumeSuccess()
+        }
+    }
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            "Login",
+            style = MaterialTheme.typography.titleLarge
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = state.email,
+            onValueChange = vm::onEmailChange,
+            label = { Text("Email") },
+            enabled = !state.loading,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(Modifier.height(12.dp))
+
+        OutlinedTextField(
+            value = state.password,
+            onValueChange = vm::onPasswordChange,
+            label = { Text("Password") },
+            enabled = !state.loading,
+            visualTransformation = PasswordVisualTransformation(),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        Button(
+            onClick = vm::submitLogin,
+            enabled = !state.loading,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(if (state.loading) "Loading..." else "Login")
+        }
+
+        state.error?.let { msg ->
+            Spacer(Modifier.height(12.dp))
+            Text(msg, color = MaterialTheme.colorScheme.error)
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun LoginWrapperPreview() {
+    Login(onLogin = {}, onDaftar = {})
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun LoginScreenPreview() {
+    LoginScreen(onSuccess = {})
 }
